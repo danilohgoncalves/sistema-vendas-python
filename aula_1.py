@@ -2,12 +2,32 @@ import sqlite3
 
 def cadastrar_produto():
     nome = input("Nome do produto: ")
-    preco = float(input("Preço: "))
-    estoque = int(input("Estoque: "))
+    if nome.strip() == "":
+        print("O nome do produto não pode ficar vazio!")
+        return
+    try:
+        preco = float(input("Preço: "))
+    except ValueError:
+        print("Digite um preço válido!")
+        return
+
+
+    try:
+        estoque = int(input("Estoque: "))
+    except ValueError:
+        print("Digite um estoque valido!")
+        return
 
     conexao = sqlite3.connect("banco.db")
     cursor = conexao.cursor()
 
+    if preco < 0:
+        print("O preço não pode ser negativo!")
+        return
+
+    if estoque < 0:
+        print("O estoque não pode ser negativo!")
+        return
     cursor.execute("""
     INSERT INTO produtos (nome, preco, estoque)
     VALUES (?, ?, ?)
@@ -38,9 +58,40 @@ def atualizar_produto():
     cursor = conexao.cursor()
 
     id_produto = int(input("ID do produto: "))
+
+    cursor.execute(
+        "SELECT id FROM produtos WHERE id = ?",
+        (id_produto,)
+    )
+
+    produto = cursor.fetchone()
+
+    if produto is None:
+        print("Produto não encontrado!")
+        conexao.close()
+        return
+
     nome = input("Novo nome: ")
-    preco = float(input("Novo preço: "))
-    estoque = int(input("Novo estoque: "))
+
+    try:
+        preco = float(input("Novo preço: "))
+    except ValueError:
+        print("Digite um preço válido!")
+        return
+
+    if preco < 0:
+        print("O preço não pode ser negativo!")
+        return
+
+    try:
+        estoque = int(input("Novo estoque: "))
+    except ValueError:
+        print("Digite um estoque válido!")
+        return
+
+    if estoque < 0:
+        print("O estoque não pode ser negativo!")
+        return
 
     cursor.execute("""
     UPDATE produtos
@@ -60,6 +111,18 @@ def excluir_produto():
     id_produto = int(input("ID do produto que deseja excluir: "))
 
     cursor.execute(
+        "SELECT id FROM produtos WHERE id = ?",
+        (id_produto,)
+    )
+
+    produto = cursor.fetchone()
+
+    if produto is None:
+        print("Produto não encontrado!")
+        conexao.close()
+        return
+
+    cursor.execute(
         "DELETE FROM produtos WHERE id = ?",
         (id_produto,)
     )
@@ -72,6 +135,10 @@ def excluir_produto():
 def registrar_venda():
     produto_id = int(input("ID do produto: "))
     quantidade = int(input("Quantidade vendida: "))
+
+    if quantidade <= 0:
+        print("A quantidade deve ser maior que zero!")
+        return
 
     conexao = sqlite3.connect("banco.db")
     cursor = conexao.cursor()
@@ -170,7 +237,82 @@ def listar_vendas ():
 
     conexao.close()
 
+def entrada_estoque():
+    conexao = sqlite3.connect("banco.db")
+    cursor = conexao.cursor()
+
+    id_produto = int(input("ID do produto: "))
+    quantidade = int(input("Quantidade de entrada: "))
+
+    if quantidade <= 0:
+        print("A quantidade deve ser maior que zero!")
+        conexao.close()
+        return
+
+    cursor.execute(
+        "SELECT estoque FROM produtos WHERE id = ?",
+        (id_produto,)
+    )
+
+    produto = cursor.fetchone()
+
+    if produto is None:
+        print("Produto não encontrado!")
+        conexao.close()
+        return
+
+    estoque_atual = produto[0]
+    novo_estoque = estoque_atual + quantidade
+
+    cursor.execute("""
+        UPDATE produtos
+        SET estoque = ?
+        WHERE id = ?
+    """, (novo_estoque, id_produto))
+
+    conexao.commit()
+    conexao.close()
+
+    print(f"Entrada registrada! Novo estoque: {novo_estoque}")
+
+def saida_estoque():
+    conexao =sqlite3.connect("banco.db")
+    cursor = conexao.cursor()
     
+    id_produto = int(input("ID do produto: "))
+    quantidade = int(input("Quantidade de saida: "))
+
+    if quantidade <= 0:
+        print("A quantidade deve ser maior que zero!")
+        conexao.close()
+        return
+    cursor.execute(
+        "SELECT estoque FROM produtos WHERE id = ?",
+        (id_produto,)
+        )
+    produto = cursor.fetchone()
+    if produto is None:
+            print("Produto não encontrado!")
+            conexao.close()
+            return
+    estoque_atual = produto[0]
+
+    if quantidade > estoque_atual:
+        print("Estoque insuficiente!")
+        conexao.close()
+        return
+    
+    novo_estoque = estoque_atual - quantidade
+    cursor.execute("""
+            UPDATE produtos
+            SET estoque = ?
+            WHERE id = ?
+        """, (novo_estoque, id_produto))
+    conexao.commit()
+    conexao.close()
+    
+    print(f"Saida Registrada! Novo estoque: {novo_estoque}")
+
 while True: 
     print("\n=== SISTEMA DE VENDAS ===")
     print("1 - Cadastrar produto")
@@ -178,8 +320,10 @@ while True:
     print("3 - Atualizar produto")
     print("4 - Excluir produto")
     print("5 - Registrar Venda")
-    print("6 - Ver faturamento")
-    print("7 - listar_vendas")
+    print("6 - Entrada de Estoque")
+    print("7 - Saída de Estoque")
+    print("8 - Ver faturamento")
+    print("9 - listar_vendas")
     print("0 - Sair")
 
     opcao = input("Escolha uma opção: ")
@@ -199,10 +343,16 @@ while True:
     elif opcao == "5":
         registrar_venda()
         
-    elif opcao == "6":
+    elif opcao =="6":
+        entrada_estoque()
+
+    elif opcao =="7":
+        saida_estoque()
+
+    elif opcao == "8":
         ver_faturamento()
 
-    elif opcao == "7":
+    elif opcao == "9":
         listar_vendas()
     
     elif opcao == "0":
