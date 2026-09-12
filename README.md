@@ -1,40 +1,89 @@
-# Sistema de Vendas em Python
+Aplicação web para gerenciamento de produtos, controle de estoque e registro de vendas, desenvolvida com Python e Flask.
 
-Sistema de vendas desenvolvido em Python utilizando SQLite para gerenciamento de produtos, controle de estoque e registro de vendas.
+O projeto simula algumas operações comuns de um comércio, permitindo cadastrar produtos, atualizar informações, controlar quantidades em estoque e registrar vendas através de uma interface web.
 
 ## Funcionalidades
 
 - Cadastro de produtos
 - Listagem de produtos
-- Atualização de produtos
+- Edição de produtos
 - Exclusão de produtos
+- Entrada e saída de estoque
 - Registro de vendas
-- Controle de estoque
+- Atualização do estoque após uma venda
+- Consulta de vendas
 - Cálculo do faturamento
 
-## Tecnologias Utilizadas
+## Tecnologias
 
 - Python
+- Flask
 - SQLite
 - SQL
+- HTML
+- CSS
+- Jinja2
 
-## Objetivo
+## Estrutura
 
-Este projeto foi desenvolvido com o objetivo de praticar conceitos de programação em Python, banco de dados SQLite e operações CRUD, simulando o funcionamento de um sistema de vendas.
+```text
+sistemas_vendas/
+├── app.py
+├── database.py
+├── static/
+│   └── style.css
+├── templates/
+│   ├── base.html
+│   ├── index.html
+│   ├── produto_form.html
+│   ├── produtos.html
+│   ├── estoque.html
+│   └── vendas.html
+└── README.md
+```
 
 ## Como executar
 
-1. Clone o repositório:
-   ```bash
-   git clone https://github.com/danilohgoncalves/sistema-vendas-python.git
-   ```
+Clone o repositório:
 
-2. Entre na pasta do projeto:
-   ```bash
-   cd sistema-vendas-python
-   ```
+```bash
+git clone https://github.com/danilohgoncalves/sistema-vendas-python.git
+```
 
-3. Execute o programa:
-   ```bash
-   python aula_1.py
-   ```
+Entre na pasta:
+
+```bash
+cd sistema-vendas-python
+```
+
+Instale o Flask:
+
+```bash
+pip install flask
+```
+
+Execute a aplicação:
+
+```bash
+python app.py
+```
+
+Acesse no navegador:
+
+```text
+http://127.0.0.1:5000
+```
+
+## Sobre o projeto
+
+Este projeto foi desenvolvido como parte dos meus estudos em desenvolvimento de sistemas, com o objetivo de praticar a construção de uma aplicação web utilizando backend em Python, banco de dados SQLite e integração com páginas HTML.
+
+Durante o desenvolvimento, trabalhei com operações CRUD, manipulação de banco de dados, rotas Flask, templates Jinja2 e regras de negócio relacionadas ao controle de estoque e vendas.
+
+## Próximos passos
+
+- Implementar autenticação de usuários
+- Adicionar relatórios de vendas
+- Melhorar o dashboard
+- Adicionar validações e mensagens mais completas
+- Evoluir a aplicação para um ambiente de produção
