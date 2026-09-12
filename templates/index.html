@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block titulo %}Painel{% endblock %}
+{% block conteudo %}
+  <h1 class="page-title">Painel</h1>
+  <p class="page-subtitle">Resumo geral do depósito.</p>
+
+  <div class="metric-row">
+    <div class="metric">
+      <div class="valor">{{ total_produtos }}</div>
+      <div class="rotulo">Produtos cadastrados</div>
+    </div>
+    <div class="metric">
+      <div class="valor">R$ {{ "%.2f"|format(faturamento) }}</div>
+      <div class="rotulo">Faturamento total</div>
+    </div>
+    <div class="metric">
+      <div class="valor">{{ estoque_baixo|length }}</div>
+      <div class="rotulo">Itens com estoque baixo (≤ 5)</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Estoque baixo</h2>
+    {% if estoque_baixo %}
+      <table>
+        <thead>
+          <tr><th>Produto</th><th>Estoque</th></tr>
+        </thead>
+        <tbody>
+          {% for p in estoque_baixo %}
+            <tr>
+              <td>{{ p.nome }}</td>
+              <td class="estoque-baixo">{{ p.estoque }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="vazio">Nenhum produto com estoque baixo no momento.</p>
+    {% endif %}
+  </div>
+{% endblock %}

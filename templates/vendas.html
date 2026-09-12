@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block titulo %}Vendas{% endblock %}
+{% block conteudo %}
+  <h1 class="page-title">Vendas</h1>
+  <p class="page-subtitle">Registre uma venda e acompanhe o histórico.</p>
+
+  <div class="metric-row">
+    <div class="metric">
+      <div class="valor">R$ {{ "%.2f"|format(faturamento) }}</div>
+      <div class="rotulo">Faturamento total</div>
+    </div>
+    <div class="metric">
+      <div class="valor">{{ vendas|length }}</div>
+      <div class="rotulo">Vendas registradas</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Nova venda</h2>
+    <form method="POST">
+      <label for="produto_id">Produto</label>
+      <select id="produto_id" name="produto_id" required>
+        <option value="" disabled selected>Selecione um produto</option>
+        {% for p in produtos %}
+          <option value="{{ p.id }}">{{ p.nome }} — R$ {{ "%.2f"|format(p.preco) }} (estoque: {{ p.estoque }})</option>
+        {% endfor %}
+      </select>
+
+      <label for="quantidade">Quantidade</label>
+      <input type="number" min="1" id="quantidade" name="quantidade" required>
+
+      <button type="submit">Registrar venda</button>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2>Histórico de vendas</h2>
+    {% if vendas %}
+      <table>
+        <thead><tr><th>Produto</th><th>Quantidade</th><th>Valor total</th></tr></thead>
+        <tbody>
+          {% for v in vendas %}
+            <tr>
+              <td>{{ v.nome }}</td>
+              <td>{{ v.quantidade }}</td>
+              <td>R$ {{ "%.2f"|format(v.valor_total) }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="vazio">Nenhuma venda registrada ainda.</p>
+    {% endif %}
+  </div>
+{% endblock %}
